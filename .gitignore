@@ -3,6 +3,8 @@ core.mongo*
 core.python*
 env.py
 __pycache__/
+*.pyc
 *.py[cod]
 node_modules/
 .github/
+*.sqlite3
