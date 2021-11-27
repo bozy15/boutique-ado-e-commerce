@@ -14,9 +14,24 @@ def all_products(request):
 
     query = None  # Sets query to empty value to prevent errors
     categories= None  # Sets category to empty value to prevent errors
+    sort = None  # Sets sort to empty value to prevent errors
+    direction = None  # Sets direction to empty value to prevent errors
 
     # Search queries
     if request.GET:
+        if "sort" in request.GET:
+            sortkey = request.GET["sort"]
+            sort = sortkey
+            if sortkey == "name":
+                sortkey = "lower_name"
+                products = products.annotate(lower_name=Lower("name"))
+
+            if "direction" in request.GET:
+                direction = request.GET["direction"]
+                if direction == "desc":
+                    sortkey = f"-{sortkey}"
+            products = products.order_by(sortkey)
+        
         if "category" in request.GET:  # If there is a category
             categories = request.GET["category"].split(",")  # Split the categories
             products = products.filter(
@@ -37,10 +52,14 @@ def all_products(request):
             queries = Q(name__icontains=query) | Q(description__icontains=query)
             # Filter the products by the search query
             products = products.filter(queries)
+
+    current_sorting = f"{sort}_{direction}"
+
     context = {
         "products": products,
         "search_term": query,
         "current_categories": categories,
+        "current_sorting": current_sorting,
     }
 
     return render(request, "products/products.html", context)
