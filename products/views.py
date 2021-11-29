@@ -13,7 +13,7 @@ def all_products(request):
     products = Product.objects.all()
 
     query = None  # Sets query to empty value to prevent errors
-    categories= None  # Sets category to empty value to prevent errors
+    categories = None  # Sets category to empty value to prevent errors
     sort = None  # Sets sort to empty value to prevent errors
     direction = None  # Sets direction to empty value to prevent errors
 
@@ -25,13 +25,15 @@ def all_products(request):
             if sortkey == "name":
                 sortkey = "lower_name"
                 products = products.annotate(lower_name=Lower("name"))
+            if sortkey == "category":
+                sortkey = "category__name"
 
             if "direction" in request.GET:
                 direction = request.GET["direction"]
-                if direction == "desc":
-                    sortkey = f"-{sortkey}"
-            products = products.order_by(sortkey)
-        
+                if direction == "desc":  # If direction is descending
+                    sortkey = f"-{sortkey}"  # display descending
+            products = products.order_by(sortkey)  # Sort products
+
         if "category" in request.GET:  # If there is a category
             categories = request.GET["category"].split(",")  # Split the categories
             products = products.filter(
@@ -53,9 +55,9 @@ def all_products(request):
             # Filter the products by the search query
             products = products.filter(queries)
 
-    current_sorting = f"{sort}_{direction}"
+    current_sorting = f"{sort}_{direction}"  # Set current sorting
 
-    context = {
+    context = {  # Pass the context to the template
         "products": products,
         "search_term": query,
         "current_categories": categories,
