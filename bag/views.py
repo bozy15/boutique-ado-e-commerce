@@ -28,5 +28,4 @@ def add_to_bag(request, item_id):
         bag[item_id] = quantity
 
     request.session["bag"] = bag # save the bag back to the session
-    print(request.session["bag"])
     return redirect(redirect_url) # redirect to the url specified in the form
