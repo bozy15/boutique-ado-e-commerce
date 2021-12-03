@@ -102,7 +102,7 @@ a.category-badge > span.badge:hover {
 .btt-link,
 .update-link,
 .remove-item {
-  cursor: pointer;
+  cursor: pointer; 
 }
 /* -------------------------------- Media Queries */
 
